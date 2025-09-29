@@ -1,0 +1,64 @@
+<!-- Chris Franz -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Strings Page</title>
+</head>
+<body>
+  <!-- Heading -->
+  <h2>Strings & Validation</h2>
+
+  <!-- Input boxes for first/last name -->
+  First Name: <input id="first"><br><br>
+  Last Name: <input id="last"><br><br>
+
+  <!-- Input box for zip -->
+  ZIP Code: <input id="zip"><br><br>
+
+  <!-- Button to trigger validation -->
+  <button onclick="checkInputs()">Unlock Secret</button>
+
+  <!-- Area to show messages -->
+  <p id="msg"></p>
+
+  <!-- Secret message hidden until valid -->
+  <div id="secret" style="display:none;">
+    🎉 Secret unlocked! Great job.
+  </div>
+
+  <script>
+    // Function runs when button is clicked
+    function checkInputs() {
+      // Grab values from inputs
+      let first = document.getElementById("first").value.trim();
+      let last = document.getElementById("last").value.trim();
+      let zip = document.getElementById("zip").value.trim();
+
+      // Combine first + space + last into one variable
+      let fullName = first + " " + last;
+
+      // Reset message and hide secret
+      document.getElementById("msg").textContent = "";
+      document.getElementById("secret").style.display = "none";
+
+      // Check name length
+      if (fullName.length > 20) {
+        document.getElementById("msg").textContent = "Name too long!";
+        return; // stop program
+      }
+
+      // Check zip = exactly 5 digits
+      if (!/^\d{5}$/.test(zip)) {
+        document.getElementById("msg").textContent = "ZIP must be 5 digits.";
+        return; // stop program
+      }
+
+      // If valid, show success + secret
+      document.getElementById("msg").textContent = "Welcome, " + fullName + "!";
+      document.getElementById("secret").style.display = "block";
+    }
+  </script>
+</body>
+</html>
+
