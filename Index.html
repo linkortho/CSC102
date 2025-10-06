@@ -1,27 +1,39 @@
-<!-- Chris Franz, September 14, 2025 -->
-<!-- DOCTYPE this is the first tag on the page and it tells the browser this is an HTML5 page -->
+<!-- Chris Franz, Oct 5, 2025 -->
 <!DOCTYPE html>
-<!-- the html tag goes next -->
-<html>
-   <!-- The head section has info for the browser and search engine -->
+<html lang="en">
 <head>
-    <title>CSC102 Homepage</title>
-       <!-- add a link to our css file -->
-        <link rel="stylesheet" href="main.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CSC102 – Week 4 Event-Driven Meme Mover</title>
+  <link rel="stylesheet" href="main.css"/>
+  <script src="app.js" defer></script>
 </head>
+<body>
+  <h1>Event-Driven Meme Mover</h1>
 
-<!-- The body section holds the text and images we want to show the user -->
- <body>
-    <h1>Welcome to my CSC102 Homepage</h1>
-<!-- create a new section to hold the menu -->
- <nav>
-    <a href="Index.html">Home</a>
- <br>
- <a href="Boards.html">Boards</a>
-    <!-- p is paragraph tag; has spacing around it by default -->
-    <p>
-        <!-- img is the image tag -->
-<img id="memeImage" src="meme.jpg">
-    </p>
- </body>
+  <nav>
+    <a href="index.html">Home</a><br>
+    <a href="Boards.html">Boards</a>
+  </nav>
+
+  <p>Click <b>Start</b> to move the meme. Click <b>Stop</b> to halt it.</p>
+
+  <section class="controls">
+    <button id="btnStart" onClick="onStartClick()">Start</button>
+    <button id="btnStop"  onClick="onStopClick()" disabled>Stop</button>
+  </section>
+
+  <section id="stage">
+    <img id="meme" src="meme.jpg" alt="Meme that moves"/>
+  </section>
+
+  <section class="panel">
+    <form id="palForm" onsubmit="return onFormSubmit()">
+      <label for="palText">Enter text to check palindrome:</label>
+      <input type="text" id="palText" name="palText" placeholder="Racecar" required/>
+      <button type="submit">Check</button>
+    </form>
+    <div id="msg" aria-live="polite">Status: Ready.</div>
+  </section>
+</body>
 </html>
