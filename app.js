@@ -1,83 +1,136 @@
-// ==== Global state ====
-let moveTimer = null;
-let posX = 10, posY = 10;
-let vx = 4,  vy = 3;
+// ===============================
+// Palindrome Checker Logic (app.js)
+// Author: Chris Franz
+// Date: 2025-10-12
+// Purpose:
+// - Demonstrate variables, data types, collections, loops, conditionals, and functions
+// - Use a FORM with submit for input and innerHTML for all messages
+// - Avoid alerts/prompts/actionListeners, and keep JS out of HTML
+// ===============================
 
-// ==== DOM (script is deferred) ====
-const btnStart = document.getElementById('btnStart');
-const btnStop  = document.getElementById('btnStop');
-const meme     = document.getElementById('meme');
-const stage    = document.getElementById('stage');
-const msg      = document.getElementById('msg');
+// Grab the FORM element by its id so we can handle submit events
+const form = document.getElementById("palForm");
+// Grab the input element where the user types text
+const userTextInput = document.getElementById("userText");
+// Grab the messages container where we will render results/validation via innerHTML
+const messages = document.getElementById("messages");
+// Grab the 'I'm Done' button to allow exiting the session
+const doneBtn = document.getElementById("doneBtn");
+// Grab the submit button so we can disable it when the session ends
+const submitBtn = document.getElementById("submitBtn");
 
-// ---- FAILSAFE STYLES (so it works even if CSS doesn't) ----
-stage.style.position   = 'relative';
-stage.style.height     = stage.style.height || '360px';
-stage.style.overflow   = 'hidden';
-stage.style.border     = '2px dashed #cbd5e1';
-stage.style.borderRadius = '12px';
-stage.style.background = stage.style.background || '#fff';
+// Track whether the session is active (boolean primitive)
+let sessionActive = true;
 
-meme.style.position = 'absolute';
-meme.style.width    = meme.style.width || '260px';
-meme.style.left     = posX + 'px';
-meme.style.top      = posY + 'px';
-meme.style.userSelect = 'none';
-
-// ==== Helpers ====
-function setStartEnabled(en){ btnStart.disabled = !en; }
-function setStopEnabled(en){  btnStop.disabled  = !en; }
-
-// ==== Movement ====
-function startMoving(){
-  if (moveTimer !== null) return;
-  moveTimer = setInterval(()=>{
-    posX += vx; posY += vy;
-
-    const maxX = stage.clientWidth  - meme.clientWidth;
-    const maxY = stage.clientHeight - meme.clientHeight;
-
-    if (posX <= 0){ posX = 0; vx =  Math.abs(vx); }
-    else if (posX >= maxX){ posX = maxX; vx = -Math.abs(vx); }
-
-    if (posY <= 0){ posY = 0; vy =  Math.abs(vy); }
-    else if (posY >= maxY){ posY = maxY; vy = -Math.abs(vy); }
-
-    meme.style.left = posX + 'px';
-    meme.style.top  = posY + 'px';
-  }, 16); // ~60fps
-}
-function stopMoving(){
-  if (moveTimer !== null){ clearInterval(moveTimer); moveTimer = null; }
+// -------------------------------
+// Function: sanitizeInput
+// Purpose: remove all non-alphanumeric characters and lowercase the input
+// Params: raw (string) - original user input
+// Returns: (string) - cleaned version for palindrome checking
+// -------------------------------
+function sanitizeInput(raw) {
+  // Use a regex to strip out spaces/punctuation; keep letters/numbers only
+  // Demonstrates string methods and RegExp usage
+  return raw.replace(/[^a-z0-9]/gi, "").toLowerCase();
 }
 
-// ==== Click handlers (wired via onClick in HTML) ====
-function onStartClick(){
-  setStartEnabled(false); setStopEnabled(true);
-  startMoving();
-  if (msg) msg.innerHTML = '<span class="ok">Moving… click Stop to halt.</span>';
-}
-function onStopClick(){
-  stopMoving();
-  setStartEnabled(true); setStopEnabled(false);
-  if (msg) msg.innerHTML = '<span class="warn">Stopped. Click Start to move again.</span>';
+// -------------------------------
+/* Function: isPalindrome
+ * Purpose: check if a given string reads the same forward and backward
+ * Params: text (string) - user input
+ * Returns: (boolean) - true if palindrome and non-empty after cleaning
+ * Steps:
+ *   1) Clean the input using sanitizeInput (re-usable function)
+ *   2) Split into an array of characters (collection), reverse, and rejoin
+ *   3) Compare with the cleaned original
+ */
+// -------------------------------
+function isPalindrome(text) {
+  // Clean the text for fair comparison
+  const clean = sanitizeInput(text);
+  // Convert to array, reverse order (algorithm using collection ops), then join back into string
+  const reversed = clean.split("").reverse().join("");
+  // Ensure not empty and equality holds; return a boolean
+  return clean.length > 0 && clean === reversed;
 }
 
-// ==== Form submit (innerHTML, no alerts) ====
-function onFormSubmit(){
-  const raw = document.getElementById('palText').value;
-  if (!raw || raw.trim().length < 2){
-    msg.innerHTML = '<span class="err">Please enter at least 2 characters.</span>';
-    return false;
+// -------------------------------
+// Function: renderMessage
+// Purpose: centralize message rendering via innerHTML (per assignment rules)
+// Params: html (string) - HTML content to inject into the messages area
+// Returns: void
+// -------------------------------
+function renderMessage(html) {
+  // Use innerHTML as explicitly required
+  messages.innerHTML = html;
+}
+
+// -------------------------------
+// Function: showResult
+// Purpose: display the original input and whether it was a palindrome
+// Params: original (string), result (boolean)
+// Returns: void
+// -------------------------------
+function showResult(original, result) {
+  // Build a small status chip using conditional expression
+  const chip = result
+    ? '<span style="color:green;font-weight:600;">Palindrome</span>'
+    : '<span style="color:red;font-weight:600;">Not a Palindrome</span>';
+
+  // Inject structured HTML into the message area
+  renderMessage(
+    `<p><strong>Input:</strong> ${original}</p>
+     <p><strong>Result:</strong> ${chip}</p>`
+  );
+}
+
+// -------------------------------
+// Event handler: form submission (no addEventListener per rules)
+// Demonstrates: conditionals, early returns, calling functions, DOM updates, and reset loop
+// -------------------------------
+form.onsubmit = function (evt) {
+  // Prevent default page reload so we can handle in JS
+  evt.preventDefault();
+
+  // If the session has ended, ignore further submissions
+  if (!sessionActive) return;
+
+  // Read raw value from the text input
+  const raw = userTextInput.value || "";
+
+  // Validate that something was entered (trim to ignore whitespace)
+  if (raw.trim().length === 0) {
+    // Render validation feedback via innerHTML
+    renderMessage("<p style='color:#b91c1c;'>Please enter a word or phrase.</p>");
+    // Return focus to the input for a11y and UX
+    userTextInput.focus();
+    // Exit early due to invalid input
+    return;
   }
-  const s = raw.toLowerCase().replace(/[^a-z0-9]/g,'');
-  const r = s.split('').reverse().join('');
-  msg.innerHTML = (s && s === r)
-    ? `"${raw}" is a palindrome ✅`
-    : `"${raw}" is not a palindrome.`;
-  return false;
-}
 
-// ==== Initial UI ====
-setStartEnabled(true); setStopEnabled(false);
+  // Compute whether the input is a palindrome (core algorithm)
+  const result = isPalindrome(raw);
 
+  // Display the outcome in the messages area
+  showResult(raw, result);
+
+  // Clear the field for the next loop iteration (user can keep trying terms)
+  userTextInput.value = "";
+  // Move focus back to the input for rapid consecutive checks (UX loop)
+  userTextInput.focus();
+};
+
+// -------------------------------
+// Event handler: end session (no addEventListener, using property assignment)
+// Purpose: demonstrate state changes and DOM updates without alerts/prompts
+// -------------------------------
+doneBtn.onclick = function () {
+  // Flip session state so further submits are ignored
+  sessionActive = false;
+  // Inform the user that the session ended
+  renderMessage("<p>Session Ended. Refresh the page to start again.</p>");
+  // Disable all inputs/buttons to communicate the end of interaction
+  userTextInput.disabled = true;
+  submitBtn.disabled = true;
+  doneBtn.disabled = true;
+};

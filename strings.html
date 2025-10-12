@@ -1,64 +1,171 @@
-<!-- Chris Franz -->
+<!--
+  Palindrome Checker Assignment
+  Author: Chris Franz
+  Date: 2025-10-12
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Strings Page</title>
-</head>
-<body>
-  <!-- Heading -->
-  <h2>Strings & Validation</h2>
-
-  <!-- Input boxes for first/last name -->
-  First Name: <input id="first"><br><br>
-  Last Name: <input id="last"><br><br>
-
-  <!-- Input box for zip -->
-  ZIP Code: <input id="zip"><br><br>
-
-  <!-- Button to trigger validation -->
-  <button onclick="checkInputs()">Unlock Secret</button>
-
-  <!-- Area to show messages -->
-  <p id="msg"></p>
-
-  <!-- Secret message hidden until valid -->
-  <div id="secret" style="display:none;">
-    🎉 Secret unlocked! Great job.
-  </div>
-
-  <script>
-    // Function runs when button is clicked
-    function checkInputs() {
-      // Grab values from inputs
-      let first = document.getElementById("first").value.trim();
-      let last = document.getElementById("last").value.trim();
-      let zip = document.getElementById("zip").value.trim();
-
-      // Combine first + space + last into one variable
-      let fullName = first + " " + last;
-
-      // Reset message and hide secret
-      document.getElementById("msg").textContent = "";
-      document.getElementById("secret").style.display = "none";
-
-      // Check name length
-      if (fullName.length > 20) {
-        document.getElementById("msg").textContent = "Name too long!";
-        return; // stop program
+  <head>
+    <!-- Declare character encoding for proper text rendering -->
+    <meta charset="UTF-8" />
+    <!-- Ensure responsive layout on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Page title appears in browser tab -->
+    <title>Palindrome Checker</title>
+    <!-- Import a clean, modern font (creative element #1) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Inline CSS for a simple, polished look and feel -->
+    <style>
+      /* Set a soft gradient background (creative element #2) */
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e6fffa 100%);
+        font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
-
-      // Check zip = exactly 5 digits
-      if (!/^\d{5}$/.test(zip)) {
-        document.getElementById("msg").textContent = "ZIP must be 5 digits.";
-        return; // stop program
+      /* Card container for content */
+      .card {
+        width: min(680px, 92vw);
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 15px 40px rgba(2, 6, 23, 0.08);
       }
+      /* Header row for title and logo */
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 12px;
+      }
+      /* App title styling */
+      h1 {
+        margin: 0;
+        font-size: 1.6rem;
+        letter-spacing: 0.2px;
+      }
+      /* Subheader/description text */
+      p.lead {
+        margin: 6px 0 16px;
+        color: #334155;
+      }
+      /* SVG badge acting as a decorative logo (creative element #3) */
+      .badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: #ecfeff;
+        border: 1px solid #cffafe;
+      }
+      /* Form layout */
+      form {
+        display: grid;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      /* Labels for inputs */
+      label {
+        font-weight: 600;
+      }
+      /* Text input appearance */
+      input[type="text"] {
+        padding: 12px 14px;
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        font-size: 1rem;
+        outline: none;
+      }
+      /* Button base */
+      .btn {
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      /* Primary action button */
+      .btn-primary {
+        background: #2563eb;
+        color: white;
+        border: none;
+      }
+      /* Secondary (ghost) button */
+      .btn-ghost {
+        background: transparent;
+        border: 1px solid #cbd5e1;
+        color: #0f172a;
+      }
+      /* Horizontal arrangement for buttons */
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 6px;
+      }
+      /* Area where innerHTML renders validation/result messages */
+      #messages {
+        margin-top: 14px;
+        padding: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        min-height: 56px;
+      }
+      /* Footer note */
+      .note {
+        margin-top: 12px;
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Outer card for visual structure -->
+    <div class="card">
+      <!-- Header contains a small SVG logo badge and the title -->
+      <div class="header">
+        <!-- Decorative SVG to enhance UX without external images -->
+        <div class="badge" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 12a8 8 0 1116 0 8 8 0 01-16 0z" stroke="#06b6d4" stroke-width="2"/>
+            <path d="M8.5 12c0-2.5 2-4.5 4.5-4.5S17.5 9.5 17.5 12 15.5 16.5 13 16.5 8.5 14.5 8.5 12z" stroke="#0891b2" stroke-width="2"/>
+          </svg>
+        </div>
+        <!-- Main page title -->
+        <h1>Palindrome Checker</h1>
+      </div>
 
-      // If valid, show success + secret
-      document.getElementById("msg").textContent = "Welcome, " + fullName + "!";
-      document.getElementById("secret").style.display = "block";
-    }
-  </script>
-</body>
+      <!-- Short description to guide the user -->
+      <p class="lead">Enter a word or phrase. We’ll ignore spaces and punctuation and tell you if it’s a palindrome.</p>
+
+      <!-- Form is REQUIRED for all user input; submit triggers JS (no prompts/alerts) -->
+      <form id="palForm" novalidate>
+        <!-- Label describing the text input’s purpose -->
+        <label for="userText">Your text</label>
+        <!-- Single-line text input where the user types a word/phrase -->
+        <input id="userText" name="userText" type="text" placeholder="e.g., Race car" required />
+
+        <!-- Action buttons grouped together -->
+        <div class="actions">
+          <!-- Submit button to check palindrome via form submission -->
+          <button id="submitBtn" class="btn btn-primary" type="submit">Check Palindrome</button>
+          <!-- Secondary button to end the session cleanly -->
+          <button id="doneBtn" class="btn btn-ghost" type="button">I'm Done</button>
+        </div>
+      </form>
+
+      <!-- Message area: validation, success/failure, and session status appear here via innerHTML -->
+      <div id="messages" role="status" aria-live="polite"></div>
+
+      <!-- Brief reminder of the rules followed -->
+      <div class="note">
+        No alerts or prompts are used. Results and validation appear above.
+      </div>
+    </div>
+
+    <!-- Load the JavaScript that powers the app (kept separate per requirements) -->
+    <script src="app.js"></script>
+  </body>
 </html>
-
