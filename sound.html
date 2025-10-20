@@ -1,0 +1,44 @@
+<!--
+  Author: Chris Franz
+  Project: Sound with Applause (ready-to-run)
+  Notes:
+    - Plays your uploaded applause6.mp3 using native <audio> controls.
+    - MP3 is placed next to this file; no path edits required.
+    - Includes creative elements: custom font, gradient background, themed image/card styling.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Applause Demo</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="card">
+    <header class="hero">
+      <h1 class="title">Applause Sound Test</h1>
+      <p class="tagline">Press play to hear your file: <code>applause6.mp3</code></p>
+    </header>
+
+    <figure class="image-frame">
+      <img src="assets/space_hero.png" alt="Themed hero image" class="hero-img">
+      <figcaption class="caption">Applause demo – native player below.</figcaption>
+    </figure>
+
+    <section class="player-wrap">
+      <audio id="audio" controls preload="auto" playsinline>
+        <source src="applause6.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+      <p class="hint">If you don’t hear sound, click once anywhere on the page, then press <em>Play</em>.</p>
+    </section>
+  </main>
+</body>
+</html>
